@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teman Tani — Asisten Perencanaan Proyek Pertanian</title>
+  <style>
+    :root {
+      --primary: #1b4332;
+      --primary-light: #2d6a4f;
+      --primary-soft: #e8f3ee;
+      --accent: #d97706;
+      --accent-soft: #fef3c7;
+      --bg: #f4f7f2;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #dce5dc;
+      --success: #15803d;
+      --success-bg: #dcfce7;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: 48px;
+    }
+
+    /* Navbar */
+    header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      padding: 14px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+    }
+
+    .nav-container {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: white;
+    }
+
+    .brand-title {
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: 0.5px;
+      line-height: 1.1;
+    }
+
+    .brand-sub {
+      font-size: 0.72rem;
+      opacity: 0.85;
+      font-weight: 400;
+    }
+
+    .nav-badge {
+      background: rgba(255,255,255,0.16);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1120px;
+      margin: 20px auto;
+      padding: 0 16px;
+    }
+
+    .page-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .page-header h1 {
+      font-size: 1.45rem;
+      color: var(--primary);
+    }
+
+    /* Top Control Card */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 14px rgba(27, 67, 50, 0.05);
+      margin-bottom: 20px;
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      background: #fafcfa;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      background: #fff;
+    }
+
+    .auto-box {
+      background: var(--primary-soft);
+      border: 1.5px solid #bfe0ce;
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+
+    .auto-box .val {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* Timeline Phase Bar */
+    .phase-wrapper {
+      padding-top: 8px;
+      border-top: 1px dashed var(--border);
+    }
+
+    .phase-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .phase-step {
+      text-align: center;
+      padding: 10px 6px;
+      border-radius: 10px;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      transition: all 0.25s;
+    }
+
+    .phase-step.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      box-shadow: 0 4px 10px rgba(27,67,50,0.2);
+    }
+
+    .phase-step.done {
+      background: var(--success-bg);
+      color: var(--success);
+      border-color: #86efac;
+    }
+
+    .phase-step .p-title {
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .phase-step .p-sub {
+      font-size: 0.72rem;
+      opacity: 0.85;
+    }
+
+    /* Two-column Dashboard Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    @media (max-width: 860px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      .summary-sticky {
+        order: -1;
+      }
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    /* Filter Pills */
+    .filter-pills {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .pill {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: white;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--muted);
+    }
+
+    .pill.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* Weekly Task Card */
+    .task-card {
+      background: white;
+      border: 1.5px solid var(--border);
+      border-left: 5px solid var(--accent);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .task-card.completed {
+      border-left-color: var(--success);
+      background: #f8fdf9;
+    }
+
+    .task-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .week-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 6px;
+      background: var(--accent-soft);
+      color: #92400e;
+      margin-bottom: 4px;
+    }
+
+    .task-card.completed .week-badge {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .task-title {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .task-date {
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .task-details {
+      background: #f9fafb;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin: 10px 0;
+      font-size: 0.86rem;
+    }
+
+    .task-details p {
+      margin-bottom: 4px;
+    }
+
+    .task-details p:last-child {
+      margin-bottom: 0;
+    }
+
+    .task-metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.85rem;
+      margin-bottom: 12px;
+      padding-top: 6px;
+      border-top: 1px solid #f0f2f0;
+    }
+
+    .metric-item span {
+      color: var(--muted);
+      display: block;
+      font-size: 0.74rem;
+    }
+
+    .metric-item strong {
+      color: var(--primary);
+      font-size: 0.92rem;
+    }
+
+    .task-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 8px 14px;
+      border-radius: 9px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    .btn-outline {
+      background: white;
+      border-color: var(--border);
+      color: var(--text);
+    }
+
+    .btn-outline:hover {
+      background: #f3f4f6;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-light);
+    }
+
+    .btn-done {
+      background: var(--success-bg);
+      color: var(--success);
+      border-color: #86efac;
+    }
+
+    /* Summary Card */
+    .summary-sticky {
+      position: sticky;
+      top: 76px;
+    }
+
+    .progress-circle-box {
+      text-align: center;
+      padding: 14px 0;
+    }
+
+    .progress-ring {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: conic-gradient(var(--accent) var(--pct, 0%), #e5e7eb 0%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 10px;
+    }
+
+    .progress-inner {
+      width: 82px;
+      height: 82px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: var(--primary);
+    }
+
+    .summary-stat {
+      padding: 10px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .summary-stat .label {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .summary-stat .big-val {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .summary-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 100;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: white;
+      border-radius: 16px;
+      max-width: 500px;
+      width: 100%;
+      padding: 22px;
+      box-shadow: 0 20px 35px rgba(0,0,0,0.2);
+      max-height: 88vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-close {
+      background: #f3f4f6;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    .guide-list {
+      padding-left: 18px;
+      margin: 10px 0;
+    }
+
+    .guide-list li {
+      margin-bottom: 8px;
+      font-size: 0.92rem;
+    }
+
+    @media print {
+      header, .filter-pills, .task-actions, .summary-btns {
+        display: none !important;
+      }
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="nav-container">
+      <a href="#" class="brand">
+        <!-- Logo Original Teman Tani (Caping + Tunas Daun) -->
+        <svg width="38" height="38" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="32" cy="32" r="30" fill="#ffffff" fill-opacity="0.15"/>
+          <path d="M10 34C10 34 21 15 32 15C43 15 54 34 54 34C45 37 19 37 10 34Z" fill="#F59E0B" stroke="#FEF3C7" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M32 36V51" stroke="#A7F3D0" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M32 45C24 45 19 39 19 39C19 39 26 37 32 45Z" fill="#6EE7B7"/>
+          <path d="M32 42C40 42 45 36 45 36C45 36 38 34 32 42Z" fill="#34D399"/>
+        </svg>
+        <div>
+          <div class="brand-title">TEMAN TANI</div>
+          <div class="brand-sub">Perencana Proyek & Kalender Budidaya</div>
+        </div>
+      </a>
+      <div class="nav-badge">🌾 Mode Lapangan</div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="page-header">
+      <h1 id="projectHeading">Proyek: Budidaya Padi Ciherang (Lahan A)</h1>
+    </div>
+
+    <!-- Panel Input Proyek -->
+    <section class="card">
+      <div class="input-grid">
+        <div class="form-group">
+          <label for="cropSelect">Komoditas / Tanaman</label>
+          <select id="cropSelect">
+            <option value="padi">Padi Ciherang (Panen ±115 HSS)</option>
+            <option value="jagung">Jagung Hibrida (Panen ±100 HST)</option>
+            <option value="cabai">Cabai Merah Keriting (Panen ±90 HST)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="landName">Nama Lahan / Blok</label>
+          <input type="text" id="landName" value="Lahan A" placeholder="Contoh: Blok Sawah Timur" />
+        </div>
+
+        <div class="form-group">
+          <label for="landArea">Luas Lahan (Hektar)</label>
+          <input type="number" id="landArea" value="1" min="0.05" step="0.05" />
+        </div>
+
+        <div class="form-group">
+          <label for="seedDate">Tanggal Mulai / Semai</label>
+          <input type="date" id="seedDate" />
+        </div>
+
+        <div class="form-group">
+          <label>Otomatis Tgl Tanam Lahan</label>
+          <div class="auto-box">
+            <div class="val" id="plantDateDisplay">-</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Estimasi Tanggal Panen</label>
+          <div class="auto-box">
+            <div class="val" id="harvestDateDisplay">-</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Indikator Fase Pertumbuhan -->
+      <div class="phase-wrapper">
+        <div style="font-size:0.8rem; font-weight:700; color:var(--muted);">ALUR FASE TANAMAN:</div>
+        <div class="phase-steps" id="phaseSteps">
+          <div class="phase-step" data-phase="Semai">
+            <div class="p-title">1. Semai</div>
+            <div class="p-sub" id="subSemai">Persiapan Bibit</div>
+          </div>
+          <div class="phase-step" data-phase="Vegetatif">
+            <div class="p-title">2. Vegetatif</div>
+            <div class="p-sub" id="subVeg">Pertumbuhan Daun & Anakan</div>
+          </div>
+          <div class="phase-step" data-phase="Generatif">
+            <div class="p-title">3. Generatif</div>
+            <div class="p-sub" id="subGen">Berbunga & Pengisian</div>
+          </div>
+          <div class="phase-step" data-phase="Panen">
+            <div class="p-title">4. Panen</div>
+            <div class="p-sub" id="subPanen">Pemanenan Hasil</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Area Jadwal Mingguan & Ringkasan -->
+    <div class="dashboard-grid">
+      <div>
+        <div class="section-title">
+          <span>Kalender Kerja & Kebutuhan Mingguan</span>
+        </div>
+
+        <div class="filter-pills" id="filterPills">
+          <button class="pill active" data-filter="ALL">Semua Jadwal</button>
+          <button class="pill" data-filter="Semai">Semai</button>
+          <button class="pill" data-filter="Vegetatif">Vegetatif</button>
+          <button class="pill" data-filter="Generatif">Generatif</button>
+          <button class="pill" data-filter="Panen">Panen</button>
+        </div>
+
+        <div id="taskList"></div>
+      </div>
+
+      <!-- Ringkasan Biaya & Tenaga -->
+      <aside class="card summary-sticky">
+        <div class="section-title" style="margin-bottom:4px;">Ringkasan Proyek</div>
+        <div class="progress-circle-box">
+          <div class="progress-ring" id="progressRing">
+            <div class="progress-inner">
+              <span id="progressPct">0%</span>
+            </div>
+          </div>
+          <div style="font-size:0.8rem; color:var(--muted);" id="progressText">0 dari 0 tahapan selesai</div>
+        </div>
+
+        <div class="summary-stat">
+          <div class="label">Estimasi Total Biaya (s/d Panen)</div>
+          <div class="big-val" id="totalCostDisplay">Rp 0</div>
+        </div>
+
+        <div class="summary-stat">
+          <div class="label">Total Kebutuhan Tenaga Kerja</div>
+          <div class="big-val" id="totalLaborDisplay">0 Orang (HOK)</div>
+        </div>
+
+        <div class="summary-stat">
+          <div class="label">Standar Upah HOK / Orang</div>
+          <div style="display:flex; gap:6px; margin-top:4px;">
+            <input type="number" id="hokRateInput" value="120000" step="5000" style="width:100%; padding:6px 8px; border:1px solid var(--border); border-radius:8px; font-weight:700;" />
+          </div>
+        </div>
+
+        <div class="summary-btns">
+          <button class="btn btn-primary" onclick="window.print()">🖨️ Cetak / Simpan PDF</button>
+          <button class="btn btn-outline" id="resetBtn">🔄 Reset Centang Selesai</button>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Modal Panduan Kerja -->
+  <div class="modal-backdrop" id="guideModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modalTitle" style="color:var(--primary); font-size:1.05rem;">Panduan Pekerjaan</h3>
+        <button class="modal-close" id="closeModalBtn">&times;</button>
+      </div>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <script>
+    // Data Template Budidaya (basis per 1 Hektar)
+    const CROP_DATA = {
+      padi: {
+        name: "Budidaya Padi Ciherang",
+        transplantOffset: 21, // H+21 setelah semai
+        harvestOffset: 115,   // H+115 setelah semai
+        tasks: [
+          {
+            id: "p1",
+            week: "Minggu ke-1 (H+0 Semai)",
+            dayOffset: 0,
+            phase: "Semai",
+            title: "Perendaman Benih & Pembuatan Persemaian",
+            work: "Seleksi benih bernas dengan air garam, rendam 24 jam, peram 48 jam hingga berkecambah, lalu tebar merata di bedengan semai.",
+            inputs: [
+              { name: "Benih Padi Bersertifikat", qtyPerHa: 25, unit: "kg", pricePerUnit: 14000 },
+              { name: "Pupuk Organik / Kompos Semai", qtyPerHa: 200, unit: "kg", pricePerUnit: 1500 }
+            ],
+            hokPerHa: 3,
+            guide: [
+              "Gunakan benih berlabel (25 kg/Ha). Rendam benih dalam air bersih selama 24 jam.",
+              "Buat bedengan persemaian seluas ±400 m² untuk 1 Ha lahan utama dengan drainase keliling.",
+              "Taburkan benih yang sudah berkecambah secara merata dan jaga kelembapan tanah (macak-macak)."
+            ]
+          },
+          {
+            id: "p2",
+            week: "Minggu ke-3 (H+15 Semai)",
+            dayOffset: 15,
+            phase: "Semai",
+            title: "Olah Tanah Lahan Utama & Pupuk Semai",
+            work: "Pembajakan lahan utama (singkal & garu), perbaikan pematang, serta pemupukan ringan pada bibit di persemaian.",
+            inputs: [
+              { name: "Pupuk Urea (Persemaian)", qtyPerHa: 10, unit: "kg", pricePerUnit: 2800 },
+              { name: "Biaya Traktor / Olah Tanah", qtyPerHa: 1, unit: "paket", pricePerUnit: 1800000 }
+            ],
+            hokPerHa: 4,
+            guide: [
+              "Bajak tanah sedalam 15-20 cm dan biarkan tergenang agar gulma membusuk.",
+              "Garu tanah hingga melumpur rata menjelang pindah tanam.",
+              "Berikan sedikit Urea di persemaian agar bibit hijau segar dan mudah dicabut."
+            ]
+          },
+          {
+            id: "p3",
+            week: "Minggu ke-4 (H+21 / Awal Vegetatif)",
+            dayOffset: 21,
+            phase: "Vegetatif",
+            title: "Pindah Tanam (Transplanting) Bibit ke Lahan",
+            work: "Cabut bibit umur 21 hari dengan hati-hati, tanam sistem jajar legowo (2-3 bibit per lubang) dengan kedalaman 2-3 cm.",
+            inputs: [
+              { name: "Moluskisida (Pencegahan Keong Mas)", qtyPerHa: 2, unit: "kg", pricePerUnit: 35000 }
+            ],
+            hokPerHa: 12,
+            guide: [
+              "Tanam bibit muda umur 18-21 hari agar anakan produktif tumbuh maksimal.",
+              "Gunakan sistem tanam Jajar Legowo 2:1 atau 4:1 untuk memudahkan perawatan dan sirkulasi udara.",
+              "Pertahankan air macak-macak selama 3-5 hari pertama setelah tanam."
+            ]
+          },
+          {
+            id: "p4",
+            week: "Minggu ke-5 (7–10 HST / Vegetatif)",
+            dayOffset: 29,
+            phase: "Vegetatif",
+            title: "Penyulaman & Pemupukan Pertama",
+            work: "Sulam tanaman yang mati/terserang keong, dilanjutkan pemupukan dasar pertama untuk memacu pertumbuhan akar dan anakan.",
+            inputs: [
+              { name: "Pupuk Urea", qtyPerHa: 100, unit: "kg", pricePerUnit: 2800 },
+              { name: "Pupuk NPK Phonska", qtyPerHa: 150, unit: "kg", pricePerUnit: 3200 }
+            ],
+            hokPerHa: 3,
+            guide: [
+              "Lakukan penyulaman maksimal 10 hari setelah tanam agar umur pertumbuhan seragam.",
+              "Taburkan pupuk Urea dan NPK secara merata saat kondisi air di petakan macak-macak.",
+              "Jangan mengairi terlalu dalam setelah pemupukan agar pupuk tidak hanyut."
+            ]
+          },
+          {
+            id: "p5",
+            week: "Minggu ke-7 (21–25 HST / Vegetatif)",
+            dayOffset: 43,
+            phase: "Vegetatif",
+            title: "Penyiangan Gulma (Matun) & Pemupukan Kedua",
+            work: "Bersihkan gulma di sela barisan tanaman menggunakan landak/gasrok atau manual, lalu berikan pupuk susulan kedua.",
+            inputs: [
+              { name: "Pupuk Urea", qtyPerHa: 75, unit: "kg", pricePerUnit: 2800 },
+              { name: "Pupuk NPK Phonska", qtyPerHa: 100, unit: "kg", pricePerUnit: 3200 },
+              { name: "Insektisida Penggerek Batang (Sundep)", qtyPerHa: 1, unit: "liter", pricePerUnit: 135000 }
+            ],
+            hokPerHa: 6,
+            guide: [
+              "Penyiangan gulma sangat krusial sebelum pemupukan kedua agar nutrisi tidak direbut rumput.",
+              "Amati tanda serangan penggerek batang (pucuk mengering/sundep) dan semprot sesuai dosis anjuran."
+            ]
+          },
+          {
+            id: "p6",
+            week: "Minggu ke-10 (42–45 HST / Awal Generatif)",
+            dayOffset: 64,
+            phase: "Generatif",
+            title: "Pemupukan Fase Bunting & Pencegahan Jamur",
+            work: "Pemupukan kalium untuk memperkuat batang dan malai, serta penyemprotan fungisida pencegahan blas/hawar daun.",
+            inputs: [
+              { name: "Pupuk KCl / Kalium", qtyPerHa: 50, unit: "kg", pricePerUnit: 6500 },
+              { name: "Fungisida Sistemik (Blas & Kresek)", qtyPerHa: 1, unit: "liter", pricePerUnit: 160000 }
+            ],
+            hokPerHa: 3,
+            guide: [
+              "Pada fase bunting (primordia), tanaman membutuhkan Kalium tinggi untuk pembentukan malai.",
+              "Jaga ketinggian air sekitar 3-5 cm dan pastikan tidak kekeringan."
+            ]
+          },
+          {
+            id: "p7",
+            week: "Minggu ke-13 (65–70 HST / Generatif)",
+            dayOffset: 86,
+            phase: "Generatif",
+            title: "Pengisian Bulir & Pengendalian Walang Sangit",
+            work: "Penyemprotan pupuk daun/mikro dan pengendalian hama penghisap bulir (walang sangit) pada pagi atau sore hari.",
+            inputs: [
+              { name: "Pupuk Daun / ZPT Pengisi Bulir", qtyPerHa: 1, unit: "liter", pricePerUnit: 95000 },
+              { name: "Insektisida Kontak Walang Sangit", qtyPerHa: 1, unit: "liter", pricePerUnit: 115000 }
+            ],
+            hokPerHa: 2,
+            guide: [
+              "Lakukan penyemprotan sebelum pukul 09.00 pagi atau setelah pukul 15.30 sore.",
+              "Hindari menyemprot saat bunga padi sedang mekar penuh (pukul 09.00–12.00) agar penyerbukan tidak terganggu."
+            ]
+          },
+          {
+            id: "p8",
+            week: "Minggu ke-16 (H+115 / Panen)",
+            dayOffset: 115,
+            phase: "Panen",
+            title: "Pengeringan Lahan & Pemanenan Padi",
+            work: "Keringkan lahan 7-10 hari sebelum panen, lalu lakukan pemotongan dan perontokan gabah saat 90% bulir sudah menguning.",
+            inputs: [
+              { name: "Karung Gabah & Terpal Panen", qtyPerHa: 80, unit: "lembar", pricePerUnit: 3500 }
+            ],
+            hokPerHa: 14,
+            guide: [
+              "Keringkan sawah 10 hari menjelang panen agar proses pematangan gabah serempak dan mudah dipanen.",
+              "Segera rontokkan gabah setelah dipotong untuk menekan susut hasil dan menjaga kualitas beras."
+            ]
+          }
+        ]
+      },
+      jagung: {
+        name: "Budidaya Jagung Hibrida",
+        transplantOffset: 0,
+        harvestOffset: 100,
+        tasks: [
+          {
+            id: "j1",
+            week: "Minggu ke-1 (H+0 Tanam)",
+            dayOffset: 0,
+            phase: "Semai",
+            title: "Olah Tanah & Tanam Benih Langsung",
+            work: "Pembuatan bedengan/alur tanam jarak 75x20 cm, perlakuan benih anti-bulai, dan penanaman 1 benih per lubang.",
+            inputs: [
+              { name: "Benih Jagung Hibrida", qtyPerHa: 20, unit: "kg", pricePerUnit: 85000 },
+              { name: "Fungisida Perlakuan Benih (Bulai)", qtyPerHa: 0.25, unit: "kg", pricePerUnit: 180000 }
+            ],
+            hokPerHa: 8,
+            guide: [
+              "Campurkan benih dengan fungisida berbahan aktif dimetomorf/metalaksil sebelum tanam untuk mencegah penyakit bulai.",
+              "Tanam benih sedalam 3-4 cm dan tutup dengan tanah gembur atau kompos."
+            ]
+          },
+          {
+            id: "j2",
+            week: "Minggu ke-3 (15–20 HST / Vegetatif)",
+            dayOffset: 18,
+            phase: "Vegetatif",
+            title: "Pemupukan Pertama & Penyiangan Gulma",
+            work: "Pemberian pupuk NPK dan Urea tugal 7 cm di samping batang, dilanjutkan pengendalian ulat grayak.",
+            inputs: [
+              { name: "Pupuk Urea", qtyPerHa: 150, unit: "kg", pricePerUnit: 2800 },
+              { name: "Pupuk NPK Phonska", qtyPerHa: 200, unit: "kg", pricePerUnit: 3200 },
+              { name: "Insektisida Ulat Grayak", qtyPerHa: 0.5, unit: "liter", pricePerUnit: 175000 }
+            ],
+            hokPerHa: 6,
+            guide: [
+              "Buat lubang tugal berjarak 7 cm dari batang jagung dan tutup kembali setelah pupuk dimasukkan.",
+              "Periksa pucuk daun muda; jika terdapat kotoran ulat grayak, segera semprot pada sore hari."
+            ]
+          },
+          {
+            id: "j3",
+            week: "Minggu ke-6 (35–40 HST / Vegetatif)",
+            dayOffset: 38,
+            phase: "Vegetatif",
+            title: "Pemupukan Kedua & Pembumbunan Batang",
+            work: "Penimbunan pangkal batang (pembumbunan) agar tanaman kokoh tidak mudah rebah, disertai pemupukan susulan kedua.",
+            inputs: [
+              { name: "Pupuk Urea", qtyPerHa: 150, unit: "kg", pricePerUnit: 2800 },
+              { name: "Pupuk KCl", qtyPerHa: 50, unit: "kg", pricePerUnit: 6500 }
+            ],
+            hokPerHa: 7,
+            guide: [
+              "Pembumbunan merangsang pertumbuhan akar tunjang sehingga batang kuat menahan angin.",
+              "Pastikan ketersediaan air cukup menjelang pembungaan."
+            ]
+          },
+          {
+            id: "j4",
+            week: "Minggu ke-9 (60 HST / Generatif)",
+            dayOffset: 60,
+            phase: "Generatif",
+            title: "Fase Berbunga & Pengisian Tongkol",
+            work: "Pengairan rutin fase kritis pembungaan dan pemangkasan daun bawah tua untuk sirkulasi udara.",
+            inputs: [
+              { name: "Pupuk Daun Kalium Tinggi", qtyPerHa: 1, unit: "liter", pricePerUnit: 95000 }
+            ],
+            hokPerHa: 3,
+            guide: [
+              "Kekurangan air pada fase keluar rambut tongkol dapat menurunkan hasil panen secara drastis.",
+              "Jaga kelembapan tanah tetap stabil hingga tongkol terisi penuh."
+            ]
+          },
+          {
+            id: "j5",
+            week: "Minggu ke-15 (H+100 / Panen)",
+            dayOffset: 100,
+            phase: "Panen",
+            title: "Panen Tongkol & Pemipilan",
+            work: "Pemetikan tongkol setelah kelobot mengering kecokelatan dan muncul lapisan hitam pada pangkal biji.",
+            inputs: [
+              { name: "Karung Panen", qtyPerHa: 90, unit: "lembar", pricePerUnit: 3500 }
+            ],
+            hokPerHa: 12,
+            guide: [
+              "Cek tanda matang fisiologis: kelobot kering dan biji mengilap keras.",
+              "Jemur jagung pipilan hingga kadar air di bawah 14% agar tahan simpan."
+            ]
+          }
+        ]
+      },
+      cabai: {
+        name: "Budidaya Cabai Merah Keriting",
+        transplantOffset: 25,
+        harvestOffset: 90,
+        tasks: [
+          {
+            id: "c1",
+            week: "Minggu ke-1 (H+0 Semai)",
+            dayOffset: 0,
+            phase: "Semai",
+            title: "Penyemaian Benih di Tray & Olah Bedengan",
+            work: "Semai benih cabai pada media arang sekam + kompos, serta pembuatan bedengan tinggi 40 cm dengan mulsa plastik.",
+            inputs: [
+              { name: "Benih Cabai Hibrida", qtyPerHa: 12, unit: "sachet", pricePerUnit: 145000 },
+              { name: "Pupuk Kandang Matang", qtyPerHa: 4000, unit: "kg", pricePerUnit: 1000 },
+              { name: "Mulsa Plastik Hitam Perak", qtyPerHa: 12, unit: "roll", pricePerUnit: 480000 }
+            ],
+            hokPerHa: 14,
+            guide: [
+              "Gunakan naungan plastik UV/paranet pada tempat semai agar bibit terlindung dari hujan deras.",
+              "Berikan kapur dolomit pada bedengan jika pH tanah di bawah 6."
+            ]
+          },
+          {
+            id: "c2",
+            week: "Minggu ke-4 (H+25 / Awal Vegetatif)",
+            dayOffset: 25,
+            phase: "Vegetatif",
+            title: "Pindah Tanam & Pemasangan Ajir",
+            work: "Tanam bibit umur 25 hari berdaun 4-5 helai pada pagi/sore hari dan pasang ajir bambu di setiap lubang tanam.",
+            inputs: [
+              { name: "Ajir Bambu", qtyPerHa: 16000, unit: "batang", pricePerUnit: 500 }
+            ],
+            hokPerHa: 15,
+            guide: [
+              "Pindahkan bibit beserta media semainya secara hati-hati agar akar tidak putus.",
+              "Segera siram dengan air bersih setelah bibit ditanam."
+            ]
+          },
+          {
+            id: "c3",
+            week: "Minggu ke-6 (14 HST / Vegetatif)",
+            dayOffset: 39,
+            phase: "Vegetatif",
+            title: "Kocor Pupuk Vegetatif & Perempelan Tunas Air",
+            work: "Pengocoran pupuk NPK seimbang, perempelan tunas di bawah cabang Y, serta pencegahan hama kutu kebul/thrips.",
+            inputs: [
+              { name: "Pupuk NPK 16-16-16", qtyPerHa: 50, unit: "kg", pricePerUnit: 16000 },
+              { name: "Insektisida Thrips & Kutu Kebul", qtyPerHa: 1, unit: "liter", pricePerUnit: 185000 }
+            ],
+            hokPerHa: 6,
+            guide: [
+              "Buang tunas air di bawah cabang utama (cabang Y) agar nutrisi fokus ke pertumbuhan tajuk.",
+              "Kocor larutan pupuk 200 ml per tanaman setiap 7-10 hari sekali."
+            ]
+          },
+          {
+            id: "c4",
+            week: "Minggu ke-9 (35 HST / Generatif)",
+            dayOffset: 60,
+            phase: "Generatif",
+            title: "Pemupukan Generatif & Pencegahan Patek (Antraknosa)",
+            work: "Pemberian pupuk tinggi Kalium & Kalsium untuk mencegah kerontokan bunga dan busuk buah.",
+            inputs: [
+              { name: "Pupuk KNO3 Putih + Kalsium", qtyPerHa: 40, unit: "kg", pricePerUnit: 24000 },
+              { name: "Fungisida Antraknosa", qtyPerHa: 1, unit: "kg", pricePerUnit: 165000 }
+            ],
+            hokPerHa: 5,
+            guide: [
+              "Tambahkan Kalsium untuk memperkuat dinding sel buah cabai sehingga tahan serangan patek.",
+              "Ikat batang cabai ke ajir agar tidak patah saat buah mulai lebat."
+            ]
+          },
+          {
+            id: "c5",
+            week: "Minggu ke-13 (H+90 / Panen Perdana)",
+            dayOffset: 90,
+            phase: "Panen",
+            title: "Panen Petikan Pertama & Sortasi Buah",
+            work: "Pemetikan buah cabai merah dengan tangkainya pada pagi hari, dilanjutkan sortasi buah sehat.",
+            inputs: [
+              { name: "Karung Jaring / Peti Kemas", qtyPerHa: 40, unit: "buah", pricePerUnit: 5000 }
+            ],
+            hokPerHa: 10,
+            guide: [
+              "Petik cabai beserta tangkainya agar buah lebih awet dan tidak cepat membusuk.",
+              "Lakukan pemetikan rutin setiap 4-5 hari sekali."
+            ]
+          }
+        ]
+      }
+    };
+
+    // State aplikasi
+    let completedTasks = JSON.parse(localStorage.getItem("temanTani_completed") || "{}");
+    let activeFilter = "ALL";
+
+    // Elemen DOM
+    const cropSelect = document.getElementById("cropSelect");
+    const landName = document.getElementById("landName");
+    const landArea = document.getElementById("landArea");
+    const seedDate = document.getElementById("seedDate");
+    const hokRateInput = document.getElementById("hokRateInput");
+
+    // Set default tanggal hari ini
+    const todayStr = new Date().toISOString().split("T")[0];
+    seedDate.value = localStorage.getItem("temanTani_seedDate") || todayStr;
+    cropSelect.value = localStorage.getItem("temanTani_crop") || "padi";
+    landName.value = localStorage.getItem("temanTani_landName") || "Lahan A";
+    landArea.value = localStorage.getItem("temanTani_landArea") || "1";
+    hokRateInput.value = localStorage.getItem("temanTani_hokRate") || "120000";
+
+    function formatDateIndo(baseDateStr, addDays) {
+      if (!baseDateStr) return "-";
+      const date = new Date(baseDateStr + "T00:00:00");
+      date.setDate(date.getDate() + addDays);
+      return date.toLocaleDateString("id-ID", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+      });
+    }
+
+    function formatRupiah(num) {
+      return "Rp " + Math.round(num).toLocaleString("id-ID");
+    }
+
+    function formatQty(num) {
+      return Number.isInteger(num) ? num : num.toFixed(1);
+    }
+
+    function renderApp() {
+      const cropKey = cropSelect.value;
+      const crop = CROP_DATA[cropKey];
+      const area = Math.max(0.01, parseFloat(landArea.value) || 1);
+      const hokRate = Math.max(0, parseFloat(hokRateInput.value) || 120000);
+      const startStr = seedDate.value;
+
+      // Simpan preferensi
+      localStorage.setItem("temanTani_crop", cropKey);
+      localStorage.setItem("temanTani_landName", landName.value);
+      localStorage.setItem("temanTani_landArea", area);
+      localStorage.setItem("temanTani_seedDate", startStr);
+      localStorage.setItem("temanTani_hokRate", hokRate);
+
+      // Update Header & Tanggal Otomatis
+      document.getElementById("projectHeading").textContent =
+        `Proyek: ${crop.name} (${landName.value || "Lahan Utama"})`;
+
+      document.getElementById("plantDateDisplay").textContent =
+        crop.transplantOffset === 0
+          ? formatDateIndo(startStr, 0) + " (Tanam Langsung)"
+          : formatDateIndo(startStr, crop.transplantOffset);
+
+      document.getElementById("harvestDateDisplay").textContent =
+        formatDateIndo(startStr, crop.harvestOffset);
+
+      // Hitung Total & Render Daftar Tugas
+      const taskList = document.getElementById("taskList");
+      taskList.innerHTML = "";
+
+      let grandTotalCost = 0;
+      let grandTotalLabor = 0;
+      let doneCount = 0;
+
+      const phaseStatus = { Semai: [], Vegetatif: [], Generatif: [], Panen: [] };
+
+      crop.tasks.forEach((task) => {
+        const isDone = !!completedTasks[task.id];
+        if (isDone) doneCount++;
+        phaseStatus[task.phase].push(isDone);
+
+        const laborCount = Math.max(1, Math.round(task.hokPerHa * area));
+        const laborCost = laborCount * hokRate;
+
+        let inputCost = 0;
+        const inputTexts = task.inputs.map((inp) => {
+          const scaledQty = inp.qtyPerHa * area;
+          inputCost += scaledQty * inp.pricePerUnit;
+          return `${inp.name} (${formatQty(scaledQty)} ${inp.unit})`;
+        });
+
+        const taskTotalCost = laborCost + inputCost;
+        grandTotalCost += taskTotalCost;
+        grandTotalLabor += laborCount;
+
+        if (activeFilter !== "ALL" && task.phase !== activeFilter) return;
+
+        const card = document.createElement("div");
+        card.className = `task-card ${isDone ? "completed" : ""}`;
+        card.innerHTML = `
+          <div class="task-top">
+            <div>
+              <span class="week-badge">${task.week} • Fase ${task.phase}</span>
+              <div class="task-title">${task.title}</div>
+            </div>
+            <div class="task-date">📅 ${formatDateIndo(startStr, task.dayOffset)}</div>
+          </div>
+
+          <div class="task-details">
+            <p><strong>Pekerjaan:</strong> ${task.work}</p>
+            <p><strong>Kebutuhan Pupuk / Obat:</strong> ${inputTexts.join(", ")}</p>
+          </div>
+
+          <div class="task-metrics">
+            <div class="metric-item">
+              <span>Estimasi Tenaga</span>
+              <strong>👷 ${laborCount} Orang (HOK)</strong>
+            </div>
+            <div class="metric-item">
+              <span>Biaya Sarana + Upah</span>
+              <strong>💰 ${formatRupiah(taskTotalCost)}</strong>
+            </div>
+          </div>
+
+          <div class="task-actions">
+            <button class="btn btn-outline" onclick="openGuide('${cropKey}', '${task.id}')">📖 Lihat Panduan</button>
+            <button class="btn ${isDone ? "btn-done" : "btn-primary"}" onclick="toggleTask('${task.id}')">
+              ${isDone ? "✅ Sudah Selesai" : "☑️ Tandai Selesai"}
+            </button>
+          </div>
+        `;
+        taskList.appendChild(card);
+      });
+
+      // Update Phase Indicator Bar
+      let foundCurrent = false;
+      document.querySelectorAll(".phase-step").forEach((el) => {
+        const p = el.dataset.phase;
+        el.classList.remove("active", "done");
+        const arr = phaseStatus[p];
+        if (arr.length > 0 && arr.every(Boolean)) {
+          el.classList.add("done");
+        } else if (!foundCurrent) {
+          el.classList.add("active");
+          foundCurrent = true;
+        }
+      });
+
+      // Update Ringkasan Proyek
+      const totalTasks = crop.tasks.length;
+      const pct = Math.round((doneCount / totalTasks) * 100);
+      document.getElementById("progressRing").style.setProperty("--pct", pct + "%");
+      document.getElementById("progressPct").textContent = pct + "%";
+      document.getElementById("progressText").textContent = `${doneCount} dari ${totalTasks} tahapan selesai`;
+      document.getElementById("totalCostDisplay").textContent = formatRupiah(grandTotalCost);
+      document.getElementById("totalLaborDisplay").textContent = `${grandTotalLabor} Orang (HOK)`;
+    }
+
+    function toggleTask(taskId) {
+      completedTasks[taskId] = !completedTasks[taskId];
+      localStorage.setItem("temanTani_completed", JSON.stringify(completedTasks));
+      renderApp();
+    }
+
+    function openGuide(cropKey, taskId) {
+      const task = CROP_DATA[cropKey].tasks.find((t) => t.id === taskId);
+      if (!task) return;
+      document.getElementById("modalTitle").textContent = `Panduan: ${task.title}`;
+      const listHtml = task.guide.map((g) => `<li>${g}</li>`).join("");
+      document.getElementById("modalBody").innerHTML = `
+        <p style="font-size:0.85rem; color:var(--muted); margin-bottom:8px;"><strong>Jadwal:</strong> ${task.week}</p>
+        <ul class="guide-list">${listHtml}</ul>
+      `;
+      document.getElementById("guideModal").classList.add("open");
+    }
+
+    document.getElementById("closeModalBtn").onclick = () => {
+      document.getElementById("guideModal").classList.remove("open");
+    };
+
+    document.getElementById("guideModal").onclick = (e) => {
+      if (e.target.id === "guideModal") {
+        document.getElementById("guideModal").classList.remove("open");
+      }
+    };
+
+    document.querySelectorAll(".pill").forEach((btn) => {
+      btn.onclick = () => {
+        document.querySelectorAll(".pill").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeFilter = btn.dataset.filter;
+        renderApp();
+      };
+    });
+
+    document.getElementById("resetBtn").onclick = () => {
+      completedTasks = {};
+      localStorage.removeItem("temanTani_completed");
+      renderApp();
+    };
+
+    [cropSelect, landName, landArea, seedDate, hokRateInput].forEach((el) => {
+      el.addEventListener("input", renderApp);
+      el.addEventListener("change", renderApp);
+    });
+
+    renderApp();
+  </script>
+</body>
+</html>
